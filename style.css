@@ -1,0 +1,138 @@
+body{
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.container{
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #D0BFFF;
+  display: grid;
+  padding: 1.25rem;
+  gap: 1.5rem;
+  grid-template-columns: 3fr 7fr;
+  
+}
+
+.inner-contz{
+  background-color: #FFFFFF;
+  border-radius: 1.25rem;
+  filter: drop-shadow(-0.1rem 0.1rem 0.25rem #706C61);
+  box-sizing: border-box;
+  overflow: hidden;
+  
+}
+
+#left-container{
+  display: flex;
+  flex-direction: column;
+}
+
+#inputzz{
+  padding-top: 1rem;
+  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 1.2rem;
+}
+#item-container{
+  flex-grow: 1;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 0rem 1.2rem 2.2rem 1.2rem;
+  box-sizing: border-box;
+}
+#item-container::-webkit-scrollbar{
+  display: none;
+}
+
+label{
+  width: 90%;
+  align-self: center;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+@keyframes vibrator {
+  0%{
+    transform: translateX(-2px);
+  }
+  33%{
+    transform: translateX(2px);
+  }
+  66%{
+    transform: translateX(2px);
+  }
+  100%{
+    transform: translateX(-2px);
+  }
+}
+
+input{
+  align-self: center;
+  width: 90%;
+  height: 3rem;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  padding-left: 0.5rem;
+  border: 1px #333 solid;
+  border-radius: 2px;
+}
+.error{
+  background-color: rgba(249, 208, 208, 0.5);
+  border: 1px #333 solid;
+  border-radius: 2px;
+  animation: vibrator 100ms ;
+  animation-iteration-count: 2;
+}
+
+input:focus{
+  outline: none;
+}
+
+#items{
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 3rem;
+  margin: 1.2rem;
+}
+
+.item{
+  background-color: rgba(112, 108, 97, 0.1);
+  border: 1px #706C61 solid;
+  width: 100%;
+  justify-self: center;
+  border-radius:0.3rem;
+  display: flex;
+  
+}
+
+hr{
+  margin: 0 1rem ;
+}
+
+h1{
+  text-align: center;
+  margin: 1rem;
+  font-family: 'Goldman', sans-serif;
+  font-size: 3rem;
+  color: #D0BFFF;
+  background-clip: text;
+  background: -webkit-linear-gradient(#333,#eee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+h4{
+  text-align: center;
+  margin: auto;
+  color: #333;
+}
+
