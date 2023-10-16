@@ -30,7 +30,15 @@ body{
   display: flex;
   flex-direction: column;
 }
-
+#right-container{
+  display:flex;
+  flex-direction: column;
+}
+#graph-container{
+  flex-grow: 1;
+  margin: 3rem;
+  background-color: green;
+}
 #inputzz{
   padding-top: 1rem;
   justify-items: center;
@@ -47,6 +55,7 @@ body{
   flex-direction: column;
   margin: 0rem 1.2rem 2.2rem 1.2rem;
   box-sizing: border-box;
+  position: relative;
 }
 #item-container::-webkit-scrollbar{
   display: none;
@@ -113,7 +122,32 @@ input:focus{
   justify-self: center;
   border-radius:0.3rem;
   display: flex;
-  
+  opacity: 0;
+}
+
+.fade-in-animation{
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.make-space{
+  animation: smooth-entry 0.5s ease-in-out;
+}
+@keyframes fade-in {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+
+@keyframes smooth-entry{
+  0%{
+    padding-top: 0;
+  }
+  100%{
+    padding-top: 3.5rem;
+  }
 }
 
 hr{
@@ -135,5 +169,18 @@ h4{
   text-align: center;
   margin: auto;
   color: #333;
+}
+h3{
+  text-align: center;
+  margin: auto;
+  color: #777;
+}
+
+#noitems{
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  align-items: center;
 }
 
