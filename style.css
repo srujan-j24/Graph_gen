@@ -33,11 +33,26 @@ body{
 #right-container{
   display:flex;
   flex-direction: column;
+  overflow: hidden;
 }
 #graph-container{
   flex-grow: 1;
-  margin: 3rem;
-  background-color: green;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 2.5rem;
+  grid-template-rows: 100%;
+  overflow-x: scroll; 
+  margin: 4rem;
+  border-left: 3px solid gray;
+  border-bottom: 3px solid gray;
+  gap: 2rem;
+  padding-left: 2rem;
+}
+#graph-container::-webkit-scrollbar{
+  display: none;
+}
+.bar-graphs{
+  background-color: chocolate;
 }
 #inputzz{
   padding-top: 1rem;
@@ -61,27 +76,13 @@ body{
   display: none;
 }
 
+
 label{
   width: 90%;
   align-self: center;
   margin-bottom: 0.5rem;
   font-size: 1rem;
   font-weight: bold;
-}
-
-@keyframes vibrator {
-  0%{
-    transform: translateX(-2px);
-  }
-  33%{
-    transform: translateX(2px);
-  }
-  66%{
-    transform: translateX(2px);
-  }
-  100%{
-    transform: translateX(-2px);
-  }
 }
 
 input{
@@ -99,20 +100,53 @@ input{
   border: 1px #333 solid;
   border-radius: 2px;
 }
-.error-animation{
-  animation: vibrator 100ms ;
-  animation-iteration-count: 2;
-}
+
 input:focus{
   outline: none;
 }
-
+@keyframes float-pos{
+  0%{
+    transform: rotate(0deg);
+  }
+  25%{
+    transform: rotate(0.5deg);
+  }
+  50%{
+    transform: rotate(0deg);
+  }
+  75%{
+    transform: rotate(-0.5deg);
+  }
+  100%{
+    transform: rotate(0deg);
+  }
+}
+@keyframes float-neg{
+  0%{
+    transform: rotate(0deg);
+  }
+  25%{
+    transform: rotate(-0.5deg);
+  }
+  50%{
+    transform: rotate(0deg);
+  }
+  75%{
+    transform: rotate(0.5deg);
+  }
+  100%{
+    transform: rotate(0deg);
+  }
+}
 #items{
   display: grid;
   gap: 0.5rem;
   grid-template-columns: 1fr;
   grid-auto-rows: 3rem;
   margin: 1.2rem;
+}
+.ani-item{
+  opacity: 1 !important ;
 }
 
 .item{
@@ -125,29 +159,12 @@ input:focus{
   opacity: 0;
 }
 
-.fade-in-animation{
-  animation: fade-in 0.5s ease-in-out;
+#items .ani-item:nth-child(even){
+  animation: float-pos 10s infinite;
 }
 
-.make-space{
-  animation: smooth-entry 0.5s ease-in-out;
-}
-@keyframes fade-in {
-  0%{
-    opacity: 0;
-  }
-  100%{
-    opacity: 1;
-  }
-}
-
-@keyframes smooth-entry{
-  0%{
-    padding-top: 0;
-  }
-  100%{
-    padding-top: 3.5rem;
-  }
+#items .ani-item:nth-child(odd){
+  animation: float-neg 10s infinite;
 }
 
 hr{
@@ -164,12 +181,14 @@ h1{
   background: -webkit-linear-gradient(#333,#ecf2ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  }
+}
+
 h4{
   text-align: center;
   margin: auto;
   color: #333;
 }
+
 h3{
   text-align: center;
   margin: auto;

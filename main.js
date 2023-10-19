@@ -4,8 +4,9 @@ let no_items_div = document.getElementById("noitems");
 let pattern = /([^\s]*)\s+(\d+(\.\d+)?)$/;
 let items_list = {};
 let inpt_label = document.querySelector("label");
-let error_value = false;
+let error_value = false;	//signifies if the input is colored red or not
 let current_item;
+let max_val = -1;
 const label_text = "Enter name & value seperated by space :";
 
 function createItem(name, value) {
@@ -27,21 +28,49 @@ function showError(message) {
 		inpt_label.innerText = message;
 		list_inpt.classList.add("error");
 	}
-	list_inpt.classList.add("error-animation");
-	list_inpt.addEventListener("animationend", ()=>{
-		list_inpt.classList.remove("error-animation");
-	});
+	let rec = list_inpt.animate(
+		[
+			{transform: "translateX(-2px)"},
+			{transform: "translateX(2px)"},
+			{transform: "translateX(2px)"},
+			{transform: "translateX(-2px)"}
+		],
+		{
+			duration: 100,
+			iterations: 2
+		}
+	)
+	console.log(rec);
 	error_value = true;
 }
+
 function assistTransition(){
-	dom_list.prepend(current_item);
-	dom_list.classList.remove("make-space");
-	current_item.classList.add("fade-in-animation");
-	current_item.addEventListener("animationend", ()=>{
-		current_item.style.opacity = 1;
-	});
-	dom_list.removeEventListener("animationend", assistTransition);
+	let make_space = dom_list.animate(
+		[
+			{paddingTop: "0rem"},
+			{paddingTop: "3.5rem"}
+		],
+		{
+			duration: 500,
+			easing: "ease-in-out"
+		}
+	);
+	make_space.finished.then(()=>{
+		dom_list.prepend(current_item);
+		return current_item.animate(
+			[
+				{opacity: "0"},
+				{opacity: "1"}
+			],
+			{
+				duration: 500,
+				easing: "ease-in-out"
+			}
+		).finished;
+	}).then(()=>{current_item.classList.add("ani-item");});
+
 }
+
 function addItem(new_name,new_val){
 	if(new_name in items_list){
 		showError("This name already exists  !!!");
@@ -51,22 +80,19 @@ function addItem(new_name,new_val){
 		no_items_div.style.display = "none";
 	}
 	createItem(new_name, new_val);
-	dom_list.classList.add("make-space");
 	list_inpt.value = "";
-	dom_list.addEventListener("animationend", assistTransition);
+	assistTransition();
 	
-
 	items_list[new_name] = {
 		name: new_name,
 		value: new_val,
 		dom_obj: current_item
 	}
-	console.log(items_list);
+
 }
 
 list_inpt.addEventListener("keyup", (e) => {
 	if(error_value){
-		console.log("hi");
 		inpt_label.innerText = label_text;
 		list_inpt.classList.remove("error");
 		error_value = false;
