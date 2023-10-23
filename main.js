@@ -11,15 +11,46 @@ let garph_cont = document.getElementById("graph-container");
 const label_text = "Enter name & value seperated by space :";
 
 
+function grantEdit(item){
+	console.log("Granted edit");
+	console.log(item);
+}
+
+function deleteItem(item){
+	console.log("deleted");
+	console.log(item);
+}
+
+function addAction(){
+	let edit_buttons = document.getElementsByClassName("edit-btn");
+	let delete_buttons = document.getElementsByClassName("del-btn");
+
+
+	for(let button of edit_buttons){
+		button.addEventListener("click", ()=>{
+			grantEdit(button.parentNode);
+		})
+	}
+	for(let button of delete_buttons){
+		button.addEventListener("click", ()=>{
+			deleteItem(button.parentNode);
+		})
+	}
+	// for(button in edit_buttons){
+	// 	edit_buttons.button.addEventListener("click", grantEdit(edit_buttons.button.parentNode));
+	// }
+	// for(button in delete_buttons){
+	// 	delete_buttons.button.addEventListener("click", deleteItem(delete_buttons.button.parentNode));
+	// }
+}
+
 function createItem(name, value) {
 	current_item = document.createElement("div");
 	let text = document.createElement("h4");
 	let del_btn = document.createElement("button");
 	let edi_btn = document.createElement("button");
-	del_btn.classList.add("btn");
-	edi_btn.classList.add("btn");
-	del_btn.classList.add("del-btn");
-	edi_btn.classList.add("edit-btn");
+	del_btn.classList.add("btn", "del-btn");
+	edi_btn.classList.add("btn", "edit-btn");
 	text.innerText = `${name} : ${value}`;
 	current_item.appendChild(text);
 	current_item.prepend(del_btn);
@@ -94,7 +125,10 @@ function assistTransition(){
 				easing: "ease-in-out"
 			}
 		).finished;
-	}).then(()=>{current_item.classList.add("ani-item");});
+	}).then(()=>{
+		current_item.classList.add("ani-item");
+		addAction();
+	});
 
 }
 
@@ -171,6 +205,7 @@ function addItem(new_name,new_val){
 		height: cur_height
 	}
 	console.log(items_list);
+	
 }
 
 list_inpt.addEventListener("keyup", (e) => {
