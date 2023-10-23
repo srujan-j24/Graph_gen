@@ -7,14 +7,41 @@ let inpt_label = document.querySelector("label");
 let error_value = false;	//signifies if the input is colored red or not
 let current_item;
 let max_val = -1;
+let garph_cont = document.getElementById("graph-container");
 const label_text = "Enter name & value seperated by space :";
+
 
 function createItem(name, value) {
 	current_item = document.createElement("div");
 	let text = document.createElement("h4");
+	let del_btn = document.createElement("button");
+	let edi_btn = document.createElement("button");
+	del_btn.classList.add("btn");
+	edi_btn.classList.add("btn");
+	del_btn.classList.add("del-btn");
+	edi_btn.classList.add("edit-btn");
 	text.innerText = `${name} : ${value}`;
 	current_item.appendChild(text);
+	current_item.prepend(del_btn);
+	current_item.prepend(edi_btn);
 	current_item.classList.add("item");
+}
+
+
+function random(){
+	return Math.floor(Math.random()*255);
+}
+function genRandomColor(){
+	return `rgb(${random()}, ${random()}, ${random()})`;
+}
+
+function createBar(height){
+	let new_bar = document.createElement("div");
+	new_bar.style.height = `${height}%`;
+	new_bar.classList.add("bar-graphs");
+	console.l
+	new_bar.style.backgroundColor = genRandomColor();
+	return new_bar;
 }
 
 function valuateInput(value) {
@@ -71,6 +98,46 @@ function assistTransition(){
 
 }
 
+
+function findMax(){
+	temp = -1;
+	for(item in items_list){
+		if(item.value > temp)
+			temp = item.value;
+	}
+	return temp;
+}
+
+function recalcuateItems(cur_val){
+	if(cur_val <= max_val){
+		return (cur_val/max_val)*100;	//returning the calculate percentage
+	}else{
+		max_val = cur_val;
+		for(item in items_list){
+			function col (item){
+				let new_height = ((items_list[item].value/max_val)*100).toFixed(4).toString();
+				items_list[item].dom_bar.animate(
+					[
+						{height: `${items_list[item].height}%`},
+						{height: `${new_height}%`}
+					],
+					{
+						duration: 500,
+						easing: "ease-in-out"
+					}
+				).finished.then(()=>{
+					console.log("helooooooooooooooooooooo");
+					console.log(items_list[item]);
+					items_list[item].dom_bar.style.height = `${new_height}%`;
+					items_list[item].height = new_height;
+				});
+			}
+			col(item);
+		}
+		return 100;		//return 100%
+	}
+}
+
 function addItem(new_name,new_val){
 	if(new_name in items_list){
 		showError("This name already exists  !!!");
@@ -82,13 +149,28 @@ function addItem(new_name,new_val){
 	createItem(new_name, new_val);
 	list_inpt.value = "";
 	assistTransition();
-	
+	let cur_height = recalcuateItems(new_val);
+	let cur_bar = createBar(cur_height);
+	garph_cont.animate(
+		[
+			{paddingLeft: "2rem"},
+			{paddingLeft: "6.5rem"}
+		],
+		{
+			duration: 500,
+			easing: "ease-in-out"
+		}
+	).finished.then(()=>{
+		garph_cont.prepend(cur_bar);
+	});
 	items_list[new_name] = {
 		name: new_name,
 		value: new_val,
-		dom_obj: current_item
+		dom_item: current_item,
+		dom_bar: cur_bar,
+		height: cur_height
 	}
-
+	console.log(items_list);
 }
 
 list_inpt.addEventListener("keyup", (e) => {
