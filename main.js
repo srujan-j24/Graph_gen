@@ -1,230 +1,203 @@
-let dom_list = document.getElementById("items");
-let list_inpt = document.getElementById("inpt");
-let no_items_div = document.getElementById("noitems");
-let pattern = /([^\s]*)\s+(\d+(\.\d+)?)$/;
-let items_list = {};
-let inpt_label = document.querySelector("label");
-let error_value = false;	//signifies if the input is colored red or not
-let current_item;
+let dom_list = document.getElementById("list");
+let dom_inpt = document.getElementById("inpt");
+let dom_no_item = document.getElementById("no-items");
+let dom_inpt_label = document.querySelector("label");
+let dom_garph_container = document.getElementById("graph-container")
+
+const pattern = /([^\s]*)\s+(\d+(\.\d+)?)$/;
+const default_label_text = "Enter name & value seperated by space :";
+
+let list = {};  // Will hold the objects of valid inputs
+let error_acitve = false;
 let max_val = -1;
-let garph_cont = document.getElementById("graph-container");
-const label_text = "Enter name & value seperated by space :";
+let calibration_needed = false;
+let is_new_max = false;
+let total_inpts = 0;
+let new_inpt_node, new_bar_node, match_obj, new_height_percent;
 
-
-function grantEdit(item){
-	console.log("Granted edit");
-	console.log(item);
+function calibrateBars(i){
+    let new_percent = ((list[i].value/max_val)*100).toFixed(4).toString();
+    list[i].bar_node.animate(
+        [
+            {height: `${list[i].height_percent}`},
+            {height: `${new_percent}%`}
+        ],
+        {
+            duration: 500,
+            easing: "ease-in-out"
+        }
+    ).finished.then(()=>{
+        list[i].bar_node.style.height = `${new_percent}%`;
+        list[i].height_percent = `${new_percent}%`;
+    })
 }
 
-function deleteItem(item){
-	console.log("deleted");
-	console.log(item);
+function animateNodeAdditions(){
+    dom_list.animate(
+        [
+            {paddingTop: "0rem"},
+            {paddingTop: "3.5rem"}
+        ],
+        {
+            duration: 500,
+            easing: "ease-in-out"
+        }
+    ).finished.then(()=>{
+        dom_list.prepend(new_inpt_node);
+        return new_inpt_node.animate(
+            [
+                {opacity: "0"},
+                {opacity: "1"}
+            ],
+            {
+                duration: 500,
+                easing: "ease-in-out"
+            }
+        ).finished;
+    }).then(()=>{
+        new_inpt_node.classList.add("ani-item");
+    });
+    if(calibration_needed){
+        for(i in list){
+            calibrateBars(i);
+            console.log("fn", i);
+        }
+        calibration_needed = false;
+    }
+    dom_garph_container.animate(
+        [
+            {paddingLeft: "2rem"},
+            {paddingLeft: "6.5rem"}
+        ],
+        {
+            duration: 500,
+            easing: "ease-in-out"
+        }
+    ).finished.then(()=>{
+        dom_garph_container.prepend(new_bar_node);
+    })
+
 }
 
-function addAction(){
-	let edit_buttons = document.getElementsByClassName("edit-btn");
-	let delete_buttons = document.getElementsByClassName("del-btn");
-
-
-	for(let button of edit_buttons){
-		button.addEventListener("click", ()=>{
-			grantEdit(button.parentNode);
-		})
-	}
-	for(let button of delete_buttons){
-		button.addEventListener("click", ()=>{
-			deleteItem(button.parentNode);
-		})
-	}
-	// for(button in edit_buttons){
-	// 	edit_buttons.button.addEventListener("click", grantEdit(edit_buttons.button.parentNode));
-	// }
-	// for(button in delete_buttons){
-	// 	delete_buttons.button.addEventListener("click", deleteItem(delete_buttons.button.parentNode));
-	// }
+function genRandNum(){
+    return Math.floor(Math.random()*255);
 }
 
-function createItem(name, value) {
-	current_item = document.createElement("div");
-	let text = document.createElement("h4");
-	let del_btn = document.createElement("button");
-	let edi_btn = document.createElement("button");
-	del_btn.classList.add("btn", "del-btn");
-	edi_btn.classList.add("btn", "edit-btn");
-	text.innerText = `${name} : ${value}`;
-	current_item.appendChild(text);
-	current_item.prepend(del_btn);
-	current_item.prepend(edi_btn);
-	current_item.classList.add("item");
-}
-
-
-function random(){
-	return Math.floor(Math.random()*255);
-}
 function genRandomColor(){
-	return `rgb(${random()}, ${random()}, ${random()})`;
+    return `rgb(${genRandNum()}, ${genRandNum()}, ${genRandNum()})`;
 }
 
-function createBar(height){
-	let new_bar = document.createElement("div");
-	new_bar.style.height = `${height}%`;
-	new_bar.classList.add("bar-graphs");
-	console.l
-	new_bar.style.backgroundColor = genRandomColor();
-	return new_bar;
+function calcHeightPercentage(value){
+    if(value <= max_val){
+        return `${((value/max_val)*100).toFixed(4)}%`;
+    }else{
+        max_val = value;
+        calibration_needed = true;
+        return  "100%";
+    }
 }
 
-function valuateInput(value) {
-	value = value.trim();
-	let matchObject = value.match(pattern);
-	return matchObject;
+function createBarNode(name, value){
+    new_height_percent = calcHeightPercentage(value);
+    new_bar_node = document.createElement("div");
+    new_bar_node.style.height = new_height_percent;
+    new_bar_node.classList.add("bar-graphs");
+    new_bar_node.style.backgroundColor = genRandomColor();
 }
 
-function showError(message) {
-	if(!error_value){
-		inpt_label.innerText = message;
-		list_inpt.classList.add("error");
-	}
-	let rec = list_inpt.animate(
-		[
-			{transform: "translateX(-2px)"},
+function createInptNode(name, value){
+    new_inpt_node = document.createElement("div");
+    let text_node = document.createElement("h4");
+    let delBtn_node = document.createElement("button");
+    let edtBtn_node = document.createElement("button");
+    new_inpt_node.classList.add("list-item");
+    delBtn_node.classList.add("btn", "del-btn");
+    edtBtn_node.classList.add("btn", "edt-btn");
+    text_node.innerText = `${name} : ${value}`;
+    new_inpt_node.appendChild(text_node);
+    new_inpt_node.appendChild(delBtn_node);
+    new_inpt_node.appendChild(edtBtn_node);
+}
+
+function showError(message){
+    dom_inpt_label.innerText = message;
+    if(!error_acitve){
+        dom_inpt.classList.add("error");
+    }
+    dom_inpt.animate(
+        [
+            {transform: "translateX(-2px)"},
 			{transform: "translateX(2px)"},
 			{transform: "translateX(2px)"},
 			{transform: "translateX(-2px)"}
-		],
-		{
-			duration: 100,
+        ],
+        {
+            duration: 100,
 			iterations: 2
-		}
-	)
-	console.log(rec);
-	error_value = true;
+        }
+    )
+    error_acitve = true;
 }
 
-function assistTransition(){
-	let make_space = dom_list.animate(
-		[
-			{paddingTop: "0rem"},
-			{paddingTop: "3.5rem"}
-		],
-		{
-			duration: 500,
-			easing: "ease-in-out"
-		}
-	);
-	make_space.finished.then(()=>{
-		dom_list.prepend(current_item);
-		return current_item.animate(
-			[
-				{opacity: "0"},
-				{opacity: "1"}
-			],
-			{
-				duration: 500,
-				easing: "ease-in-out"
-			}
-		).finished;
-	}).then(()=>{
-		current_item.classList.add("ani-item");
-		addAction();
-	});
+function addInput(){
+    let new_name = match_obj[1];
+    let new_value = match_obj[2];
 
+    if(new_name in list){
+        showError("This name already exists !!!");
+        return;
+    }
+
+    if(total_inpts === 0){
+        dom_no_item.style.display = "none";
+    }
+
+    createInptNode(new_name, new_value);
+    createBarNode(new_name, new_value);
+    dom_inpt.value = "";
+    animateNodeAdditions();
+
+    list[new_name] = {
+        name: new_name,
+        value: new_value,
+        height_percent: new_height_percent,
+        inpt_node: new_inpt_node,
+        bar_node: new_bar_node,
+    }
+    console.log(list);
+    total_inpts += 1;   //incrementing total_inpts
 }
 
-
-function findMax(){
-	temp = -1;
-	for(item in items_list){
-		if(item.value > temp)
-			temp = item.value;
-	}
-	return temp;
+function evaluateInput(){
+    let value = dom_inpt.value.trim();
+    match_obj = value.match(pattern);
+    if(match_obj === null){
+        showError("Invalid input !!!");
+        return false;
+    }
+    return true;
 }
 
-function recalcuateItems(cur_val){
-	if(cur_val <= max_val){
-		return (cur_val/max_val)*100;	//returning the calculate percentage
-	}else{
-		max_val = cur_val;
-		for(item in items_list){
-			function col (item){
-				let new_height = ((items_list[item].value/max_val)*100).toFixed(4).toString();
-				items_list[item].dom_bar.animate(
-					[
-						{height: `${items_list[item].height}%`},
-						{height: `${new_height}%`}
-					],
-					{
-						duration: 500,
-						easing: "ease-in-out"
-					}
-				).finished.then(()=>{
-					console.log("helooooooooooooooooooooo");
-					console.log(items_list[item]);
-					items_list[item].dom_bar.style.height = `${new_height}%`;
-					items_list[item].height = new_height;
-				});
-			}
-			col(item);
-		}
-		return 100;		//return 100%
-	}
+function removeError(){
+    dom_inpt_label.innerText = default_label_text;
+    dom_inpt.classList.remove("error");
+    error_acitve = false;
 }
 
-function addItem(new_name,new_val){
-	if(new_name in items_list){
-		showError("This name already exists  !!!");
-		return;
-	}
-	if(Object.keys(items_list).length === 0){
-		no_items_div.style.display = "none";
-	}
-	createItem(new_name, new_val);
-	list_inpt.value = "";
-	assistTransition();
-	let cur_height = recalcuateItems(new_val);
-	let cur_bar = createBar(cur_height);
-	garph_cont.animate(
-		[
-			{paddingLeft: "2rem"},
-			{paddingLeft: "6.5rem"}
-		],
-		{
-			duration: 500,
-			easing: "ease-in-out"
-		}
-	).finished.then(()=>{
-		garph_cont.prepend(cur_bar);
-	});
-	items_list[new_name] = {
-		name: new_name,
-		value: new_val,
-		dom_item: current_item,
-		dom_bar: cur_bar,
-		height: cur_height
-	}
-	console.log(items_list);
-	
-}
+// ------------------------- Main Logic -------------------------
+// adding listner to the input
+dom_inpt.addEventListener("keyup", (e)=>{
+    if(error_acitve){
+        removeError();  
+    }
 
-list_inpt.addEventListener("keyup", (e) => {
-	if(error_value){
-		inpt_label.innerText = label_text;
-		list_inpt.classList.remove("error");
-		error_value = false;
-	}
+    if(e.key != "Enter"){
+        return;         //exit if not enter key
+    }
 
-	if(!(e.key == "Enter")){
-		return;
-	}
+    if(!evaluateInput()){
+        return;         //exit invalid input
+    }
 
-	let match_obj = valuateInput(list_inpt.value);
-	if (!match_obj) {
-		console.log("bi");
-		showError("Invalid input  !!!");
-		return;
-	}
-
-	addItem(match_obj[1], Number(match_obj[2]));
+    addInput(); 
 });
