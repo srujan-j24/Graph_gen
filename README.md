@@ -7,6 +7,6 @@
 - JS Clousures to a understanble extent
 - Basics of Regex
 
-### My Opinion
+### My Opinion:
 - This is my first completed working project with vanilla JS, even-though many are on the way.
 - I have a huge respect to JS frameworks which give us nice sugar-coating to build faster.
