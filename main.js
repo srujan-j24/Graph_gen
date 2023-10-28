@@ -60,7 +60,6 @@ function animateNodeAdditions(){
     if(calibration_needed){
         for(i in list){
             calibrateBars(i);
-            console.log("fn", i);
         }
         calibration_needed = false;
     }
@@ -105,6 +104,15 @@ function createBarNode(name, value){
     new_bar_node.style.backgroundColor = genRandomColor();
 }
 
+function addEdtAction(node){
+    console.log("edit clicked");
+}
+
+function addDelAction(node){
+    console.log(node.parentNode);
+    console.log("delete clicked");
+}
+
 function createInptNode(name, value){
     new_inpt_node = document.createElement("div");
     let text_node = document.createElement("h4");
@@ -114,6 +122,8 @@ function createInptNode(name, value){
     delBtn_node.classList.add("btn", "del-btn");
     edtBtn_node.classList.add("btn", "edt-btn");
     text_node.innerText = `${name} : ${value}`;
+    delBtn_node.addEventListener("click", ()=>{addDelAction(delBtn_node)});
+    edtBtn_node.addEventListener("click", ()=>{addEdtAction(edtBtn_node)});
     new_inpt_node.appendChild(text_node);
     new_inpt_node.appendChild(delBtn_node);
     new_inpt_node.appendChild(edtBtn_node);
@@ -141,7 +151,7 @@ function showError(message){
 
 function addInput(){
     let new_name = match_obj[1];
-    let new_value = match_obj[2];
+    let new_value = Number(match_obj[2]);
 
     if(new_name in list){
         showError("This name already exists !!!");
@@ -164,7 +174,6 @@ function addInput(){
         inpt_node: new_inpt_node,
         bar_node: new_bar_node,
     }
-    console.log(list);
     total_inpts += 1;   //incrementing total_inpts
 }
 
@@ -199,5 +208,6 @@ dom_inpt.addEventListener("keyup", (e)=>{
         return;         //exit invalid input
     }
 
-    addInput(); 
+    addInput();
+    
 });
