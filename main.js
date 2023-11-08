@@ -127,12 +127,14 @@ function addEdtAction(node){
     editInpt.addEventListener("keypress", (e)=>{
         if(e.key == "Enter"){
             if(editInpt.value.match(pattern3)){
-                console.log("good")
+                console.log(name);
                 list[name].value = Number(editInpt.value);
-                list[name].span_node.innerHTML = list[name];
-                //replace input with span text
-                //update the value
-                //calibrate
+                max_val = findMax();
+                for(i in list){
+                    calibrateBars(i);
+                }
+                list[name].span_node.innerHTML = list[name].value;
+
             }
             else{
                 editInpt.classList.add("error");
